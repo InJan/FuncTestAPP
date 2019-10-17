@@ -10,10 +10,14 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -21,6 +25,11 @@ import android.view.ViewGroup;
  */
 public class Fragment_Second extends Fragment {
     public static final String TAG=Fragment_Second.class.getSimpleName();
+    private static List<Float> refreshList = new ArrayList<>();
+    private static float[] data; //一排显示的数据
+    private static int intervalNumHeart = 10;//数据个数
+    private static int showIndex;
+
 
     public Fragment_Second() {
         // Required empty public constructor
@@ -45,37 +54,108 @@ public class Fragment_Second extends Fragment {
         private float HEART_LINE_STROKE_WIDTH = 1f;
 
         //网格
-        private float GRID_LINE_STROKE_WIDTH = 1f;
-        private float GRID_WIDTH_AND_HEIGHT = 10f;
-
+//        private float GRID_LINE_STROKE_WIDTH = 1f;
+//        private float GRID_WIDTH_AND_HEIGHT = 10f;
 
         Paint curvePaint, paint;
         Path path;
         Float nowX, nowY;
-        Float[] data = {0f, 5f, -5f, 15f, -15f, 20f, -20f, 10f, -5f, 5f, 0f, 0f, -2.5f, 2.5f, -1f, 1f, -5f, 5f, -15f, 15f, -10f, 10f, -20f, 15f, -10f, 5f, -2.5f, 2.5f, 0f, 0f, 0f, 0f};
+//        Float[] data = {0f, 5f, -5f, 15f, -15f, 20f, -20f, 10f, -5f, 5f, 0f, 0f, -2.5f, 2.5f, -1f, 1f, -5f, 5f, -15f, 15f, -10f, 10f, -20f, 15f, -10f, 5f, -2.5f, 2.5f, 0f, 0f, 0f, 0f};
 
-        float intervalNumHeart = data.length;
-        float intervalRowHeart = width / intervalNumHeart;
+//        float intervalRowHeart = width / intervalNumHeart;
         float intervalColumnHeart = height / (MAX_VALUE * 2);
 
         public PaintingView(Context context) {
             super(context);
         }
 
+        Handler mHandler = new Handler();
         @Override
         protected void onDraw(Canvas canvas) {
             super.onDraw(canvas);
             drawBackGrid(canvas);
-            drawCurve(canvas);
-        }
+//            drawCurveStatic(canvas);
+            data = new float[intervalNumHeart];
+            Runnable runnable = new Runnable() {
+                int i = 1;
+                @Override
+                public void run() {
+                    if(i<20){
+                        i++;
+                        refreshList.add((float) i);
+                        mHandler.postDelayed(this, 1000);
+                    }
+                    else{
+                        return;
+                    }
+                }
+            };
+            drawCurveRefresh(canvas);
+            mHandler.post(runnable);
+//            for (int i = 1; i < 20; i++) {
+//                refreshList.add((float) i);
+//                drawCurveRefresh(canvas);
+//            }
 
-        private void drawCurve(Canvas canvas) {
+        }
+        private void drawCurveRefresh(Canvas canvas){
+            paint = new Paint();
+            path = new Path();
+            paint.setStyle(Paint.Style.STROKE);
+            paint.setColor(Color.parseColor("#000000"));
+            paint.isAntiAlias();
+            paint.setStrokeWidth(HEART_LINE_STROKE_WIDTH);
+            paint.setAntiAlias(true);
+
+            int nowIndex;
+            if(refreshList == null){
+                nowIndex = 0;
+            } else nowIndex=refreshList.size();
+
+            if(nowIndex == 0) {
+                return;
+            }
+            if(nowIndex < intervalNumHeart){
+                showIndex = nowIndex - 1 ;
+            }else{
+                showIndex = (nowIndex - 1) % intervalNumHeart;
+            }
+            for(int i = 0 ; i <intervalNumHeart; i++){
+                if(i>refreshList.size() - 1 ){
+                    break;
+                }
+                if(nowIndex <= intervalNumHeart){
+                    data[i] = refreshList.get(i);
+                }else{
+                    int times = (nowIndex - 1) / intervalNumHeart;
+                    int temp = times * intervalNumHeart + i;
+                    if(temp<nowIndex){
+                        data[i]=refreshList.get(temp);
+                    }
+                }
+            }
+
+            logdata();
+
+            path.moveTo(width,height / 2);
+            Float startLocationX = width - widthOfSmallGird;
+            for(float value : data){
+                nowX = startLocationX = startLocationX - widthOfSmallGird;
+                nowY = height / 2 -value*intervalColumnHeart;
+                if(startLocationX==0){
+                    path.moveTo(nowX,nowY);
+                }else{
+                    path.lineTo(nowX,nowY);
+                }
+            }
+            canvas.drawPath(path,paint);
+        }
+        private void drawCurveStatic(Canvas canvas) {
             curvePaint = new Paint();
             curvePaint.setStyle(Paint.Style.STROKE);
-//            curvePaint.setColor(Color.parseColor("#E51C23"));
             curvePaint.setColor(Color.BLACK);
-            curvePaint.setStrokeJoin(Paint.Join.ROUND);//拐角
-            curvePaint.setStrokeCap(Paint.Cap.ROUND);//线帽
+            curvePaint.setStrokeJoin(Paint.Join.ROUND);
+            curvePaint.setStrokeCap(Paint.Cap.ROUND);
             curvePaint.setStrokeWidth(1);
             curvePaint.setAntiAlias(true);
 
@@ -95,13 +175,9 @@ public class Fragment_Second extends Fragment {
         }
 
         private void drawBackGrid(Canvas canvas) {
-
             paint = new Paint();
             paint.setStrokeJoin(Paint.Join.BEVEL);
             paint.setStrokeCap(Paint.Cap.ROUND);
-
-//            paint.setColor(Color.BLACK);
-//            canvas.drawRect(0,0,width,height, paint);
             paint.reset();
             paint.setColor(Color.RED);
             paint.setAlpha(30);
@@ -123,4 +199,18 @@ public class Fragment_Second extends Fragment {
             }
         }
     }
+    private static void logdata() {
+        String str = "";
+        for (float temp : data) {
+            int tempInt = (int) temp;
+            str += tempInt + " , ";
+
+        }
+        Log( "第" +(refreshList.size()) + "次添加   " + str + "                     " );
+    }
+
+    private static void Log(String txt) {
+        System.out.println(txt);
+    }
+
 }

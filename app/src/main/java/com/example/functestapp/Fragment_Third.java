@@ -27,14 +27,14 @@ public class Fragment_Third extends Fragment {
         // Required empty public constructor
     }
 
-    private static String TAG= Fragment_First.class.getSimpleName();
+    private static String TAG= Fragment_Third.class.getSimpleName();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         Log.d(TAG,"onCreateView");
-        Fragment_Third.PaintingView myView = new Fragment_Third.PaintingView(getActivity());
+        Fragment_Third.PaintingView myView = new Fragment_Third.PaintingView(getContext());
         return myView;
     }
     @Override
@@ -78,6 +78,7 @@ public class Fragment_Third extends Fragment {
             drawCurve(canvas);
         }
         private void drawCurve(Canvas canvas){
+            path = new Path();
             curvePaint = new Paint();
             curvePaint.setStyle(Paint.Style.STROKE);
 //            curvePaint.setColor(Color.parseColor("#E51C23"));
@@ -87,7 +88,6 @@ public class Fragment_Third extends Fragment {
             curvePaint.setStrokeWidth(1);
             curvePaint.setAntiAlias(true);
 
-            path = new Path();
             path.moveTo(width, height / 2);
             Float startLocationX = width-widthOfSmallGird;
             path.lineTo(startLocationX,height / 2);
