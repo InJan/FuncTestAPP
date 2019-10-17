@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">FuncTestAPP</string>
+    <string name="navigation_First">HomeAndSet</string>
+    <string name="navigation_Second">GoodsList</string>
+    <string name="navigation_Third">ECG</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="fragment_first">First fragment</string>
+    <string name="fragment_second">Second blank fragment</string>
+    <string name="fragment_third">Third blank fragment</string>
+    <string name="testText">this is a test text</string>
+</resources>
