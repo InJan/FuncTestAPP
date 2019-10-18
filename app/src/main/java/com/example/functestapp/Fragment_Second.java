@@ -30,10 +30,10 @@ public class Fragment_Second extends Fragment {
     private static float[] data; //data display container
     private static int dataNumber = 30; //the counter of data in one frame
     private static int FrameCounter = 0; //frame animation counter
-    private static int FrameAmount = 6000; //the amount of frames
+    private static int FrameAmount = 60; //the amount of frames
     private static int showIndex = 0; //the location of latest data show
-    private static int delayTime = 1000; //delayTimeBetweenFrame
-    private static int temporaryAmount = 6000; //for temporary FrameAmount
+    private static int delayTime = 200; //delayTimeBetweenFrame
+    private static int temporaryAmount = 60; //for temporary FrameAmount
 
     public Fragment_Second() {
         // Required empty public constructor
@@ -55,11 +55,11 @@ public class Fragment_Second extends Fragment {
         public PaintingView(Context context) {
             super(context);
             data = new float[dataNumber];
-            drawCarveDelay();
+            drawCurveDelay();
         }
 
         Handler mHandler = new Handler();
-        public void drawCarveDelay(){
+        public void drawCurveDelay(){
             Runnable runDrawFresh = new Runnable() {
                 @Override
                 public void run() {
@@ -96,10 +96,12 @@ public class Fragment_Second extends Fragment {
             //Ensure minimum displayed
             FrameAmount = refreshList.size();
             if(FrameAmount<temporaryAmount){ FrameAmount = temporaryAmount; } //due to the length of true data
-            drawCurve(canvas);
+            drawCurveRefresh(canvas);
         }
 
-        private void drawCurve(Canvas canvas){
+        // refresh from left to right
+
+        private void drawCurveRefresh(Canvas canvas){
 //            paint = new Paint();
             path = new Path();
             paint.reset();
@@ -130,10 +132,13 @@ public class Fragment_Second extends Fragment {
                 if(nowIndex <= dataNumber){
                     data[i] = refreshList.get(i);
                 }else{
+//                    int t = nowIndex - dataNumber;
+//                    t %= (t+i)%dataNumber;
                     int times = (nowIndex - 1) / dataNumber;
                     int temp = times * dataNumber + i;
                     if(temp<nowIndex){
                         data[i]=refreshList.get(temp);
+                        //data[i]=refreshList.get(t);
                     }else{
                         break;
                     }

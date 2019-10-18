@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">FuncTestAPP</string>
-    <string name="navigation_First">HomeAndSet</string>
-    <string name="navigation_Second">GoodsList</string>
-    <string name="navigation_Third">ECG</string>
+    <string name="navigation_First">ECG-Scroll</string>
+    <string name="navigation_Second">ECG-Refresh</string>
+    <string name="navigation_Third">ECG-static</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="fragment_first">First fragment</string>
