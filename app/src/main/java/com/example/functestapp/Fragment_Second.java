@@ -24,12 +24,15 @@ import java.util.List;
  * A simple {@link Fragment} subclass.
  */
 public class Fragment_Second extends Fragment {
-    public static final String TAG=Fragment_Second.class.getSimpleName();
-    private static List<Float> refreshList = new ArrayList<>();
-    private static float[] data; //一排显示的数据
-    private static int intervalNumHeart = 10;//数据个数
-    private static int showIndex;
+    public static final String TAG=Fragment_Second.class.getSimpleName();//Log.d TAG
 
+    private static List<Float> refreshList = new ArrayList<>();//data source
+    private static float[] data; //data display container
+    private static int dataNumber = 31; //the counter of data in one frame
+    private static int FrameCounter = 0; //frame animation counter
+    private static int FrameAmount = 60; //the amount of frames
+    private static int showIndex = 0; //the location of latest data show
+    private static int delayTime = 100; //delayTimeBetweenFrame
 
     public Fragment_Second() {
         // Required empty public constructor
@@ -44,63 +47,63 @@ public class Fragment_Second extends Fragment {
         return PView;
     }
     class PaintingView extends View {
-
-        float verticalBigCellNum = 6f, horizontalBigCellNum = 8f;//垂直、水平线数量
-        float height = 640f, width = 480f;
-        float widthOfSmallGird = width / (verticalBigCellNum * 5);
-
-        //心电
-        private float MAX_VALUE = 20f;
-        private float HEART_LINE_STROKE_WIDTH = 1f;
-
-        //网格
-//        private float GRID_LINE_STROKE_WIDTH = 1f;
-//        private float GRID_WIDTH_AND_HEIGHT = 10f;
-
-        Paint curvePaint, paint;
+        Paint paint;
         Path path;
-        Float nowX, nowY;
-//        Float[] data = {0f, 5f, -5f, 15f, -15f, 20f, -20f, 10f, -5f, 5f, 0f, 0f, -2.5f, 2.5f, -1f, 1f, -5f, 5f, -15f, 15f, -10f, 10f, -20f, 15f, -10f, 5f, -2.5f, 2.5f, 0f, 0f, 0f, 0f};
-
-//        float intervalRowHeart = width / intervalNumHeart;
-        float intervalColumnHeart = height / (MAX_VALUE * 2);
+        Float nowX, nowY; //the coordinates
 
         public PaintingView(Context context) {
             super(context);
+            drawCarveDelay();
         }
 
         Handler mHandler = new Handler();
+        public void drawCarveDelay(){
+            Runnable runDrawFresh = new Runnable() {
+                @Override
+                public void run() {
+                    FrameCounter++;
+                    if(FrameCounter<FrameAmount) {
+                        invalidate();
+                        mHandler.postDelayed(this, delayTime);
+                    }else{
+                        Log.d(TAG,"FrameCounter: Over"+FrameCounter+"FrameAmount is "+FrameAmount);
+                    }
+                }
+            };
+            mHandler.postDelayed(runDrawFresh, delayTime);
+        }
+
+        //Generate random array of positive and negative
+        private void generateRandomArray(){
+            double random;
+            if(FrameCounter % 2 == 0){
+                random = Math.random();
+            }else {
+                random = -Math.random();
+            }
+            float value = (float)(MAX_VALUE * random);
+            refreshList.add(value);
+        }
+
         @Override
         protected void onDraw(Canvas canvas) {
             super.onDraw(canvas);
             drawBackGrid(canvas);
-//            drawCurveStatic(canvas);
-            data = new float[intervalNumHeart];
-            Runnable runnable = new Runnable() {
-                int i = 1;
-                @Override
-                public void run() {
-                    if(i<20){
-                        i++;
-                        refreshList.add((float) i);
-                        mHandler.postDelayed(this, 1000);
-                    }
-                    else{
-                        return;
-                    }
-                }
-            };
-            drawCurveRefresh(canvas);
-            mHandler.post(runnable);
-//            for (int i = 1; i < 20; i++) {
-//                refreshList.add((float) i);
-//                drawCurveRefresh(canvas);
-//            }
 
+            data = new float[dataNumber];
+//            refreshList.add((float) FrameCounter);
+            generateRandomArray();
+            //Ensure minimum displayed
+            FrameAmount = refreshList.size();
+            if(FrameAmount<60){ FrameAmount = 60; }
+            drawCurve(canvas);
         }
-        private void drawCurveRefresh(Canvas canvas){
+
+        private void drawCurve(Canvas canvas){
             paint = new Paint();
             path = new Path();
+            paint.reset();
+            path.reset();
             paint.setStyle(Paint.Style.STROKE);
             paint.setColor(Color.parseColor("#000000"));
             paint.isAntiAlias();
@@ -115,20 +118,20 @@ public class Fragment_Second extends Fragment {
             if(nowIndex == 0) {
                 return;
             }
-            if(nowIndex < intervalNumHeart){
+            if(nowIndex < dataNumber){
                 showIndex = nowIndex - 1 ;
             }else{
-                showIndex = (nowIndex - 1) % intervalNumHeart;
+                showIndex = (nowIndex - 1) % dataNumber;
             }
-            for(int i = 0 ; i <intervalNumHeart; i++){
+            for(int i = 0 ; i <dataNumber; i++){
                 if(i>refreshList.size() - 1 ){
                     break;
                 }
-                if(nowIndex <= intervalNumHeart){
+                if(nowIndex <= dataNumber){
                     data[i] = refreshList.get(i);
                 }else{
-                    int times = (nowIndex - 1) / intervalNumHeart;
-                    int temp = times * intervalNumHeart + i;
+                    int times = (nowIndex - 1) / dataNumber;
+                    int temp = times * dataNumber + i;
                     if(temp<nowIndex){
                         data[i]=refreshList.get(temp);
                     }
@@ -137,45 +140,44 @@ public class Fragment_Second extends Fragment {
 
             logdata();
 
-            path.moveTo(width,height / 2);
-            Float startLocationX = width - widthOfSmallGird;
-            for(float value : data){
-                nowX = startLocationX = startLocationX - widthOfSmallGird;
-                nowY = height / 2 -value*intervalColumnHeart;
-                if(startLocationX==0){
+            path.moveTo(0f,height / 2);
+            for(int i=0;i<data.length;i++){
+                nowX = i*widthOfSmallGird;
+
+                //surpass limit
+                float dataValue = data[i];
+                if(dataValue > 0){
+                    if(dataValue > MAX_VALUE * 0.8f){
+                        dataValue = MAX_VALUE * 0.8f;
+                    }
+                }else{
+                    if(dataValue < -MAX_VALUE * 0.8f){
+                        dataValue = -MAX_VALUE * 0.8f;
+                    }
+                }
+                float intervalColumnHeart = height / (MAX_VALUE * 2);//the temporary Column
+                nowY = height / 2 -dataValue*intervalColumnHeart;
+
+                //path continue
+                if( i-1 == showIndex){
                     path.moveTo(nowX,nowY);
                 }else{
                     path.lineTo(nowX,nowY);
                 }
             }
+
             canvas.drawPath(path,paint);
         }
-        private void drawCurveStatic(Canvas canvas) {
-            curvePaint = new Paint();
-            curvePaint.setStyle(Paint.Style.STROKE);
-            curvePaint.setColor(Color.BLACK);
-            curvePaint.setStrokeJoin(Paint.Join.ROUND);
-            curvePaint.setStrokeCap(Paint.Cap.ROUND);
-            curvePaint.setStrokeWidth(1);
-            curvePaint.setAntiAlias(true);
 
-            path = new Path();
-            path.moveTo(width, height / 2);
-            Float startLocationX = width - widthOfSmallGird;
-            path.lineTo(startLocationX, height / 2);
-            for (int i = 0; i < data.length; i++) {
-                nowX = startLocationX - i * widthOfSmallGird / 2;
-                float dataValue = data[i];
-                nowY = height / 2 - dataValue * intervalColumnHeart;
-                path.lineTo(nowX, nowY);
-            }
-//            curvePaint.setColor(Color.BLACK);
-            canvas.drawPath(path, curvePaint);
-            Log.d(TAG, "" + data.length);
-        }
+        float verticalBigCellNum = 6f, horizontalBigCellNum = 8f;//the amount of vertical and horizontal line and grid
+        float height = 640f, width = 480f;
+        float widthOfSmallGird = width / (verticalBigCellNum * 5);//the width of little grid
+        private float MAX_VALUE = 20f;// the Max value of ecg
+        private float HEART_LINE_STROKE_WIDTH = 1f;
 
         private void drawBackGrid(Canvas canvas) {
             paint = new Paint();
+            paint.reset();
             paint.setStrokeJoin(Paint.Join.BEVEL);
             paint.setStrokeCap(Paint.Cap.ROUND);
             paint.reset();
