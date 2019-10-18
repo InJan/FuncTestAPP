@@ -28,11 +28,12 @@ public class Fragment_Second extends Fragment {
 
     private static List<Float> refreshList = new ArrayList<>();//data source
     private static float[] data; //data display container
-    private static int dataNumber = 31; //the counter of data in one frame
+    private static int dataNumber = 30; //the counter of data in one frame
     private static int FrameCounter = 0; //frame animation counter
-    private static int FrameAmount = 60; //the amount of frames
+    private static int FrameAmount = 6000; //the amount of frames
     private static int showIndex = 0; //the location of latest data show
-    private static int delayTime = 100; //delayTimeBetweenFrame
+    private static int delayTime = 1000; //delayTimeBetweenFrame
+    private static int temporaryAmount = 6000; //for temporary FrameAmount
 
     public Fragment_Second() {
         // Required empty public constructor
@@ -53,6 +54,7 @@ public class Fragment_Second extends Fragment {
 
         public PaintingView(Context context) {
             super(context);
+            data = new float[dataNumber];
             drawCarveDelay();
         }
 
@@ -89,18 +91,16 @@ public class Fragment_Second extends Fragment {
         protected void onDraw(Canvas canvas) {
             super.onDraw(canvas);
             drawBackGrid(canvas);
-
-            data = new float[dataNumber];
 //            refreshList.add((float) FrameCounter);
             generateRandomArray();
             //Ensure minimum displayed
             FrameAmount = refreshList.size();
-            if(FrameAmount<60){ FrameAmount = 60; }
+            if(FrameAmount<temporaryAmount){ FrameAmount = temporaryAmount; } //due to the length of true data
             drawCurve(canvas);
         }
 
         private void drawCurve(Canvas canvas){
-            paint = new Paint();
+//            paint = new Paint();
             path = new Path();
             paint.reset();
             path.reset();
@@ -110,7 +110,7 @@ public class Fragment_Second extends Fragment {
             paint.setStrokeWidth(HEART_LINE_STROKE_WIDTH);
             paint.setAntiAlias(true);
 
-            int nowIndex;
+            int nowIndex;//latest data index
             if(refreshList == null){
                 nowIndex = 0;
             } else nowIndex=refreshList.size();
@@ -124,7 +124,7 @@ public class Fragment_Second extends Fragment {
                 showIndex = (nowIndex - 1) % dataNumber;
             }
             for(int i = 0 ; i <dataNumber; i++){
-                if(i>refreshList.size() - 1 ){
+                if(i >refreshList.size() - 1 ){
                     break;
                 }
                 if(nowIndex <= dataNumber){
@@ -134,6 +134,8 @@ public class Fragment_Second extends Fragment {
                     int temp = times * dataNumber + i;
                     if(temp<nowIndex){
                         data[i]=refreshList.get(temp);
+                    }else{
+                        break;
                     }
                 }
             }
