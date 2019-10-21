@@ -107,7 +107,9 @@ public class Fragment_First extends Fragment {
             paint.reset();
             path.reset();
 
-
+            for(int i = 0 ; i< data.length; i++ ){
+                data[i] = 1;
+            }
             canvas.drawPath(path,paint);
         }
 
@@ -226,7 +228,7 @@ public class Fragment_First extends Fragment {
             str += tempInt + " , ";
 
         }
-        Log( "第" +(refreshList.size()) + "次添加   " + str + "                     " );
+        Log( "the" +(refreshList.size()) + "times add data" + str + "                     " );
     }
 
     private static void Log(String txt) {

@@ -32,7 +32,7 @@ public class Fragment_Second extends Fragment {
     private static int FrameCounter = 0; //frame animation counter
     private static int FrameAmount = 60; //the amount of frames
     private static int showIndex = 0; //the location of latest data show
-    private static int delayTime = 200; //delayTimeBetweenFrame
+    private static int delayTime = 500; //delayTimeBetweenFrame
     private static int temporaryAmount = 60; //for temporary FrameAmount
 
     public Fragment_Second() {
@@ -145,7 +145,7 @@ public class Fragment_Second extends Fragment {
                 }
             }
 
-            logdata();
+            logData();
 
             path.moveTo(0f,height / 2);
             for(int i=0;i<data.length;i++){
@@ -208,7 +208,7 @@ public class Fragment_Second extends Fragment {
             }
         }
     }
-    private static void logdata() {
+    private static void logData() {
         String str = "";
         for (float temp : data) {
             int tempInt = (int) temp;
