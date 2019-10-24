@@ -113,6 +113,7 @@ public class Fragment_Second extends Fragment {
             paint.setAntiAlias(true);
 
             int nowIndex;//latest data index
+
             if(refreshList == null){
                 nowIndex = 0;
             } else nowIndex=refreshList.size();

@@ -19,6 +19,8 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 /**
@@ -27,13 +29,15 @@ import java.util.List;
 public class Fragment_First extends Fragment {
     public static final String TAG=Fragment_Second.class.getSimpleName();//Log.d TAG
     private static List<Float> refreshList = new ArrayList<>();//data source
+    private static List<Float> scrollList = new ArrayList<>();
     private static float[] data; //data display container
     private static int dataNumber = 30; //the counter of data in one frame
     private static int FrameCounter = 0; //frame animation counter
-    private static int FrameAmount = 60; //the amount of frames
+    private static int FrameAmount = 180; //the amount of frames
     private static int showIndex = 0; //the location of latest data show
-    private static int delayTime = 100; //delayTimeBetweenFrame
-    private static int temporaryAmount = 60; //for temporary FrameAmount
+    private static int delayTime = 250; //delayTimeBetweenFrame
+    private static int temporaryAmount = 2; //for temporary FrameAmount
+    private static int scrollIndex = 0; // scrollIndex
 
     public Fragment_First() {
         // Required empty public constructor
@@ -63,12 +67,17 @@ public class Fragment_First extends Fragment {
             Runnable runDrawFresh = new Runnable() {
                 @Override
                 public void run() {
+                    if (scrollIndex < scrollList.size()){
+                        scrollIndex++;
+                    } else {
+                        scrollIndex = 0;
+                    }
                     FrameCounter++;
                     if(FrameCounter<FrameAmount) {
                         invalidate();
                         mHandler.postDelayed(this, delayTime);
                     }else{
-                        Log.d(TAG,"FrameCounter: Over"+FrameCounter+"FrameAmount is "+FrameAmount);
+                        Log.d(TAG,"FrameCounter: Over    "+FrameCounter+"FrameAmount is "+FrameAmount);
                     }
                 }
             };
@@ -84,7 +93,8 @@ public class Fragment_First extends Fragment {
                 random = -Math.random();
             }
             float value = (float)(MAX_VALUE * random);
-            refreshList.add(value);
+//            refreshList.add(value);
+            scrollList.add(value);
         }
 
         @Override
@@ -92,11 +102,11 @@ public class Fragment_First extends Fragment {
             super.onDraw(canvas);
             drawBackGrid(canvas);
 //            refreshList.add((float) FrameCounter);
-            generateRandomArray();
-            //Ensure minimum displayed
-            FrameAmount = refreshList.size();
-            if(FrameAmount<temporaryAmount){ FrameAmount = temporaryAmount; } //due to the length of true data
-//            drawCurve(canvas);
+            generateRandomArray();//when scrollCurve put it in startScrollTimer
+            // Ensure minimum displayed
+//            FrameAmount = refreshList.size();
+//            if(FrameAmount<temporaryAmount){ FrameAmount = temporaryAmount; } //due to the length of true data
+//            drawCurveFresh(canvas);
             drawCurveScroll(canvas);
         }
 
@@ -106,86 +116,41 @@ public class Fragment_First extends Fragment {
             path = new Path();
             paint.reset();
             path.reset();
-
-            for(int i = 0 ; i< data.length; i++ ){
-                data[i] = 1;
-            }
-            canvas.drawPath(path,paint);
-        }
-
-        // refresh from left to right
-        private void drawCurve(Canvas canvas){
-//            paint = new Paint();
-            path = new Path();
-            paint.reset();
-            path.reset();
             paint.setStyle(Paint.Style.STROKE);
             paint.setColor(Color.parseColor("#000000"));
-            paint.isAntiAlias();
             paint.setStrokeWidth(HEART_LINE_STROKE_WIDTH);
             paint.setAntiAlias(true);
+            path.moveTo(0f , height/2);
 
-            int nowIndex;//latest data index
-            if(refreshList == null){
-                nowIndex = 0;
-            } else nowIndex=refreshList.size();
+            int scrollStartIndex = 0;
+            int scrollEndIndex = 0;
 
-            if(nowIndex == 0) {
-                return;
+            scrollEndIndex = scrollIndex;
+            scrollStartIndex = scrollEndIndex -dataNumber;
+            if(scrollStartIndex < 0 ){
+                scrollStartIndex = 0;
             }
-            if(nowIndex < dataNumber){
-                showIndex = nowIndex - 1 ;
-            }else{
-                showIndex = (nowIndex - 1) % dataNumber;
-            }
-            for(int i = 0 ; i <dataNumber; i++){
-                if(i >refreshList.size() - 1 ){
-                    break;
-                }
-                if(nowIndex <= dataNumber){
-                    data[i] = refreshList.get(i);
-                }else{
-//                    int t = nowIndex - dataNumber;
-//                    t %= (t+i)%dataNumber;
-                    int times = (nowIndex - 1) / dataNumber;
-                    int temp = times * dataNumber + i;
-                    if(temp<nowIndex){
-                        data[i]=refreshList.get(temp);
-                        //data[i]=refreshList.get(t);
-                    }else{
-                        break;
-                    }
-                }
-            }
+            Log("scrollStartIndex"+scrollStartIndex);
 
-            logdata();
-
-            path.moveTo(0f,height / 2);
-            for(int i=0;i<data.length;i++){
-                nowX = i*widthOfSmallGird;
-
-                //surpass limit
-                float dataValue = data[i];
+            for(int i = 0 ; i< scrollEndIndex; i++ ){
+                nowX = (i - scrollStartIndex)*widthOfSmallGird;
+//                float dataValue = data[i];
+                float dataValue = scrollList.get(i);
                 if(dataValue > 0){
                     if(dataValue > MAX_VALUE * 0.8f){
                         dataValue = MAX_VALUE * 0.8f;
                     }
-                }else{
+                }else {
                     if(dataValue < -MAX_VALUE * 0.8f){
-                        dataValue = -MAX_VALUE * 0.8f;
+                        dataValue = -(MAX_VALUE * 0.8f);
                     }
                 }
                 float intervalColumnHeart = height / (MAX_VALUE * 2);//the temporary Column
-                nowY = height / 2 -dataValue*intervalColumnHeart;
-
-                //path continue
-                if( i-1 == showIndex){
-                    path.moveTo(nowX,nowY);
-                }else{
-                    path.lineTo(nowX,nowY);
-                }
+                nowY = height / 2 - dataValue*intervalColumnHeart;
+                path.lineTo(nowX,nowY);
+//                Log("scrollIndex"+scrollEndIndex);
+//                Log("drawCarveScroll:("+nowX+","+nowY+")");
             }
-
             canvas.drawPath(path,paint);
         }
 
@@ -221,7 +186,7 @@ public class Fragment_First extends Fragment {
             }
         }
     }
-    private static void logdata() {
+    private static void logData() {
         String str = "";
         for (float temp : data) {
             int tempInt = (int) temp;
