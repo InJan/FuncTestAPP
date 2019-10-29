@@ -20,6 +20,7 @@ import android.view.ViewGroup;
 /**
  * A simple {@link Fragment} subclass.
  */
+
 public class Fragment_Third extends Fragment {
 
 
@@ -131,5 +132,4 @@ public class Fragment_Third extends Fragment {
             }
         }
     }
-
 }

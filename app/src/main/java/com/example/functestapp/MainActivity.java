@@ -22,6 +22,7 @@ import com.example.functestapp.Fragment_Third;
 
 public class MainActivity extends AppCompatActivity {
     private TextView mTextMessage;
+    private Fragment_Home Home;
     private Fragment_Third Third;
     private Fragment_Second Second;
     private Fragment_First First;
@@ -30,8 +31,6 @@ public class MainActivity extends AppCompatActivity {
 
     private FrameLayout mainFrame;
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,11 +38,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         initView();
     }
+
     private void initView(){
+        Home = new Fragment_Home();
         First = new Fragment_First();
         Second = new Fragment_Second();
         Third = new Fragment_Third();
-        fragments = new Fragment[]{First,Second,Third};
+        fragments = new Fragment[]{Home,First,Second,Third};
         mainFrame = (FrameLayout) findViewById(R.id.mainframe);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.add(R.id.mainframe, fragments[0]);
@@ -60,22 +61,28 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
-                case R.id.navigation_First:
+                case R.id.navigation_Home:
                     if(currentFragment != 0){
                         switchFragment(currentFragment,0);
                         currentFragment = 0;
                     }
                     return true;
-                case R.id.navigation_Second:
+                case R.id.navigation_First:
                     if(currentFragment != 1){
                         switchFragment(currentFragment,1);
                         currentFragment = 1;
                     }
                     return true;
-                case R.id.navigation_Third:
+                case R.id.navigation_Second:
                     if(currentFragment != 2){
                         switchFragment(currentFragment,2);
                         currentFragment = 2;
+                    }
+                    return true;
+                case R.id.navigation_Third:
+                    if(currentFragment != 3){
+                        switchFragment(currentFragment,3);
+                        currentFragment = 3;
                     }
                     return true;
             }

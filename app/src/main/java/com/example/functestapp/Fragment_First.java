@@ -2,7 +2,6 @@ package com.example.functestapp;
 
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -19,13 +18,13 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-
 
 /**
+ * Create by Yin on 2019/10/20
  * A simple {@link Fragment} subclass.
+ * Scroll display ECG from auto generate data.
  */
+
 public class Fragment_First extends Fragment {
     public static final String TAG=Fragment_Second.class.getSimpleName();//Log.d TAG
     private static List<Float> refreshList = new ArrayList<>();//data source
@@ -33,7 +32,7 @@ public class Fragment_First extends Fragment {
     private static float[] data; //data display container
     private static int dataNumber = 30; //the counter of data in one frame
     private static int FrameCounter = 0; //frame animation counter
-    private static int FrameAmount = 180; //the amount of frames
+    private static int FrameAmount = 60; //the amount of frames
     private static int showIndex = 0; //the location of latest data show
     private static int delayTime = 250; //delayTimeBetweenFrame
     private static int temporaryAmount = 2; //for temporary FrameAmount
@@ -47,7 +46,7 @@ public class Fragment_First extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment or Direct return new View
-        Log.d(TAG,"Second_View");
+        Log.d(TAG,"First_View");
         Fragment_First.PaintingView PView = new PaintingView(getContext());
         return PView;
     }
@@ -77,7 +76,7 @@ public class Fragment_First extends Fragment {
                         invalidate();
                         mHandler.postDelayed(this, delayTime);
                     }else{
-                        Log.d(TAG,"FrameCounter: Over    "+FrameCounter+"FrameAmount is "+FrameAmount);
+                        Log.d(TAG,"FrameCounter: Over  "+FrameCounter+"   FrameAmount is "+FrameAmount);
                     }
                 }
             };
@@ -130,7 +129,6 @@ public class Fragment_First extends Fragment {
             if(scrollStartIndex < 0 ){
                 scrollStartIndex = 0;
             }
-            Log("scrollStartIndex"+scrollStartIndex);
 
             for(int i = 0 ; i< scrollEndIndex; i++ ){
                 nowX = (i - scrollStartIndex)*widthOfSmallGird;

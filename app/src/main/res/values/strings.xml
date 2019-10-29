@@ -3,10 +3,20 @@
     <string name="navigation_First">ECG-Scroll</string>
     <string name="navigation_Second">ECG-Refresh</string>
     <string name="navigation_Third">ECG-static</string>
+    <string name="home">Home</string>
+    <string name="home_first_one">Head Display Region</string>
+    <string name="home_first">Head Display Region</string>
+    <string name="home_second">Side bar Display Region</string>
+    <string name="home_third">Product 1</string>
+    <string name="home_fourth">Product 2</string>
+    <string name="home_fifth">Product 3</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="fragment_first">First fragment</string>
     <string name="fragment_second">Second blank fragment</string>
     <string name="fragment_third">Third blank fragment</string>
     <string name="testText">this is a test text</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

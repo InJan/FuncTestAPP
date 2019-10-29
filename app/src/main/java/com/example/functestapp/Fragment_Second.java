@@ -21,7 +21,9 @@ import java.util.List;
 
 
 /**
+ Create by Yin on 2019/10/20
  * A simple {@link Fragment} subclass.
+ * Refresh display ECG from auto generate data.
  */
 public class Fragment_Second extends Fragment {
     public static final String TAG=Fragment_Second.class.getSimpleName();//Log.d TAG
