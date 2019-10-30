@@ -17,7 +17,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
-import java.util.List;
 
 
 /**
@@ -28,7 +27,7 @@ import java.util.List;
 public class Fragment_Second extends Fragment {
     public static final String TAG=Fragment_Second.class.getSimpleName();//Log.d TAG
 
-    private static List<Float> refreshList = new ArrayList<>();//data source
+    private static ArrayList<Float> refreshList = new ArrayList<>();//data source
     private static float[] data; //data display container
     private static int dataNumber = 30; //the counter of data in one frame
     private static int FrameCounter = 0; //frame animation counter

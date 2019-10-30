@@ -98,5 +98,4 @@ public class MainActivity extends AppCompatActivity {
         }
         transaction.show(fragments[index]).commitAllowingStateLoss();
     }
-
 }

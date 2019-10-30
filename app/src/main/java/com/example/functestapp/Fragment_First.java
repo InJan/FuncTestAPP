@@ -17,7 +17,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Create by Yin on 2019/10/20
@@ -27,8 +26,8 @@ import java.util.List;
 
 public class Fragment_First extends Fragment {
     public static final String TAG=Fragment_Second.class.getSimpleName();//Log.d TAG
-    private static List<Float> refreshList = new ArrayList<>();//data source
-    private static List<Float> scrollList = new ArrayList<>();
+    private static ArrayList<Float> refreshList = new ArrayList<>();//data source
+    private static ArrayList<Float> scrollList = new ArrayList<>();
     private static float[] data; //data display container
     private static int dataNumber = 30; //the counter of data in one frame
     private static int FrameCounter = 0; //frame animation counter
@@ -146,8 +145,6 @@ public class Fragment_First extends Fragment {
                 float intervalColumnHeart = height / (MAX_VALUE * 2);//the temporary Column
                 nowY = height / 2 - dataValue*intervalColumnHeart;
                 path.lineTo(nowX,nowY);
-//                Log("scrollIndex"+scrollEndIndex);
-//                Log("drawCarveScroll:("+nowX+","+nowY+")");
             }
             canvas.drawPath(path,paint);
         }
