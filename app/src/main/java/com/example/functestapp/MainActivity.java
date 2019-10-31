@@ -16,6 +16,8 @@ import android.widget.TextView;
 import com.example.functestapp.Fragment_First;
 import com.example.functestapp.Fragment_Second;
 import com.example.functestapp.Fragment_Third;
+
+import com.example.functestapp.WebCommunication;
 /**
  * Create by Yin on 2019/10/11
  */

@@ -57,6 +57,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/home_fifth" />
+
+                <TextView
+                    android:id="@+id/textViewForLog"
+                    android:layout_width="match_parent"
+                    android:layout_height="155dp"
+                    android:text="@string/logArea" />
             </LinearLayout>
 
         </LinearLayout>

@@ -10,6 +10,7 @@
     <string name="home_third">Product 1</string>
     <string name="home_fourth">Product 2</string>
     <string name="home_fifth">Product 3</string>
+    <string name="logArea">Log Area</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="fragment_first">First fragment</string>
